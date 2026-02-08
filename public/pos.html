@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Café POS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/css/pos.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="pos-header">
+  <h2>Cafe BARISTA</h2>
+  <div class="user-area">
+    <span>Cashier</span>
+    <button id="lockBtn">Lock</button>
+    <button id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<!-- MAIN LAYOUT -->
+<div class="pos-layout">
+
+  <!-- CATEGORIES -->
+  <aside class="panel categories">
+    <h4>Categories</h4>
+    <button>Chaat</button>
+    <button>Sandwich</button>
+    <button>Milkshakes</button>
+    <button>Desserts</button>
+    <button>Beverages</button>
+  </aside>
+
+  <!-- ITEMS -->
+  <main class="panel items" id="items"></main>
+
+<!-- BILL -->
+<aside class="panel bill">
+
+  <h4>Current Bill</h4>
+
+  <!-- Bill items -->
+  <div id="billItems" class="bill-items"></div>
+
+  <!-- Totals -->
+  <div class="bill-summary" id="summary"></div>
+
+  <!-- Actions -->
+  <div class="bill-footer">
+
+    <button id="clearCart" class="btn danger">Clear Bill</button>
+
+    <button id="payBtn" class="btn primary" disabled>PAY</button>
+
+    <button id="printBillBtn" class="btn dark">Print</button>
+
+    <div class="hold-recall">
+      <button id="holdBillBtn" class="btn soft">Hold</button>
+      <button id="recallBillBtn" class="btn outline">Recall</button>
+    </div>
+
+  </div>
+
+</aside>
+
+
+<!-- PAYMENT MODAL -->
+<div class="payment-modal" id="paymentModal">
+  <div class="modal-card">
+    <h3>Select Payment</h3>
+    <div class="payment-options">
+      <button data-type="Cash">Cash</button>
+      <button data-type="UPI">UPI</button>
+      <button data-type="Card">Card</button>
+    </div>
+    <button id="cancelPayment" class="cancel">Cancel</button>
+  </div>
+</div>
+
+<!-- RECEIPT PREVIEW -->
+<div class="receipt-modal" id="receiptModal">
+  <div class="receipt-card" id="receiptContent">
+    <p id="receiptMeta"></p>
+    <div id="receiptItems"></div>
+    <div id="receiptSummary"></div>
+    <div id="receiptQR"></div>
+
+    
+    <button id="confirmPayment">Mark as Paid</button>
+    <button id="closeReceipt" class="cancel">Close</button>
+  </div>
+</div>
+
+<!-- SESSION LOCK -->
+<div class="lock-modal" id="lockModal">
+  <div class="modal-card">
+    <h3>POS Locked</h3>
+    <input type="password" id="unlockPin" placeholder="Enter PIN">
+    <button id="unlockBtn">Unlock</button>
+  </div>
+</div>
+
+<!-- PRINT RECEIPT - PROFESSIONAL DESIGN -->
+<div id="printReceipt" style="display:none">
+  <div class="receipt-print">
+    
+    <!-- Header -->
+    <div class="receipt-header">
+      <div class="cafe-logo">☕</div>
+      <h1>CAFE BARISTA</h1>
+      <p class="cafe-tagline">Brewing Happiness Since 2020</p>
+      <div class="cafe-info">
+        <p>MG Road, Hyderabad - 500001</p>
+        <p>📞 +91 9876543210 | ✉️ hello@cafebarista.com</p>
+        <p>GSTIN: 36XXXXX1234X1ZX</p>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="receipt-divider"></div>
+
+    <!-- Order Info -->
+    <div class="order-info">
+      <div class="info-row">
+        <span class="info-label">Bill No:</span>
+        <span id="rOrder" class="info-value"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Date & Time:</span>
+        <span id="rDate" class="info-value"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Cashier:</span>
+        <span class="info-value">Cashier 01</span>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="receipt-divider"></div>
+
+    <!-- Items Header -->
+    <div class="items-header">
+      <span class="col-item">ITEM</span>
+      <span class="col-qty">QTY</span>
+      <span class="col-price">PRICE</span>
+      <span class="col-total">TOTAL</span>
+    </div>
+
+    <!-- Items List -->
+    <div id="rItems" class="items-list"></div>
+
+    <!-- Divider -->
+    <div class="receipt-divider"></div>
+
+    <!-- Totals -->
+    <div class="receipt-totals">
+      <div class="total-row">
+        <span>Subtotal:</span>
+        <span id="rSubtotal"></span>
+      </div>
+      <div class="total-row tax-row">
+        <span>CGST (4%):</span>
+        <span id="rCGST"></span>
+      </div>
+      <div class="total-row tax-row">
+        <span>SGST (4%):</span>
+        <span id="rSGST"></span>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="total-row grand-total">
+        <span>GRAND TOTAL:</span>
+        <span id="rTotal"></span>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="total-row payment-method">
+        <span>Payment Mode:</span>
+        <span id="rPayment"></span>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="receipt-footer">
+      <div class="savings-badge">
+        <p class="savings-text">You saved: ₹0 on this order!</p>
+      </div>
+      
+      <div class="thank-you">
+        <h3>Thank You for Your Visit!</h3>
+        <p>We hope to see you again soon ❤️</p>
+      </div>
+
+      <div class="footer-info">
+        <p>⭐ Rate us on Google | 📱 Follow @cafebarista</p>
+        <p class="terms">Terms & Conditions Apply | Goods once sold cannot be returned</p>
+      </div>
+
+      <div class="barcode-section">
+        <div class="barcode">||||  ||  |||||  ||  |||  ||||  ||</div>
+        <p class="barcode-text" id="rBarcodeText"></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="assets/js/items.js"></script>
+<script src="assets/js/pos.js"></script>
+
+
+</body>
+</html>

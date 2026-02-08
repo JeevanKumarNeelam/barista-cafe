@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel – Café POS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+<header class="admin-header">
+  <h2>Cafe BARISTA – Admin</h2>
+  <button id="logoutAdmin">Logout</button>
+</header>
+
+<main class="admin-container">
+
+  <!-- DASHBOARD -->
+  <section class="dashboard">
+    <div class="card">
+      <h4>Total Orders</h4>
+      <p id="totalOrders">0</p>
+    </div>
+    <div class="card">
+      <h4>Total Sales</h4>
+      <p id="totalSales">₹0</p>
+    </div>
+    <div class="card">
+      <h4>Cash</h4>
+      <p id="cashTotal">₹0</p>
+    </div>
+    <div class="card">
+      <h4>UPI</h4>
+      <p id="upiTotal">₹0</p>
+    </div>
+    <div class="card">
+      <h4>Card</h4>
+      <p id="cardTotal">₹0</p>
+    </div>
+  </section>
+
+  <!-- ORDERS TABLE -->
+  <section class="orders">
+    <h3>Order History</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Date</th>
+          <th>Payment</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
+  </section>
+
+  <!-- ADMIN ACTIONS -->
+  <section class="admin-actions">
+    <button id="exportExcel">Export to Excel</button>
+    <button id="clearOrders">Clear All Orders</button>
+  </section>
+
+</main>
+
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

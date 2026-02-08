@@ -1,0 +1,629 @@
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+
+body {
+  margin: 0;
+  background: #f4f6f8;
+}
+
+/* HEADER */
+.pos-header {
+  height: 56px;
+  background: #111827;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.pos-header h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.user-area button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* LAYOUT */
+.pos-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr 420px; /* ⬅ wider bill */
+  height: calc(100vh - 56px);
+}
+
+/* PANELS */
+.panel {
+  background: #ffffff;
+  padding: 16px;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+.panel h4 {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* CATEGORIES */
+.categories button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.categories button.active {
+  background: #111827;
+  color: #fff;
+}
+
+/* ITEMS GRID – PROFESSIONAL POS */
+.items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  align-content: start;
+}
+
+.items > h4 {
+  grid-column: 1 / -1;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ITEM BOX */
+.item-row {
+  aspect-ratio: 1 / 1;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  cursor: pointer;
+  transition: background 0.15s ease,
+              box-shadow 0.15s ease,
+              transform 0.08s ease;
+}
+
+.item-row:hover {
+  background: #f9fafb;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.item-row:active {
+  transform: scale(0.97);
+}
+
+.item-row span:first-child {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.item-row span:nth-child(2) {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* BILL */
+.bill {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f9fafb;
+  padding: 16px;
+}
+
+.bill h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.bill-items {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.bill-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.bill-item:last-child {
+  border-bottom: none;
+}
+
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qty button {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+}
+
+.bill-summary {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+/* Summary rows */
+.bill-summary p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+/* Total emphasis */
+.bill-summary h3 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 10px;
+  border-top: 1px dashed #e5e7eb;
+  padding-top: 10px;
+}
+
+.bill-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.clear-btn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pay-btn {
+  grid-column: span 2;
+  padding: 14px;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#printBillBtn {
+  background: #374151;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pay-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* MODALS (PAYMENT, RECEIPT, LOCK) */
+.payment-modal,
+.receipt-modal,
+.lock-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-modal.active,
+.receipt-modal.active,
+.lock-modal.active {
+  display: flex;
+}
+
+.modal-card,
+.receipt-card {
+  background: #fff;
+  padding: 24px;
+  width: 320px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.payment-options button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+}
+
+.cancel {
+  background: transparent;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.bill-footer {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn.primary {
+  background: #16a34a;
+  color: #fff;
+  font-size: 16px;
+}
+
+.btn.dark {
+  background: #374151;
+  color: #fff;
+}
+
+.btn.danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn.soft {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.btn.outline {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+/* Hold & Recall row */
+.hold-recall {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ============================================
+   RECEIPT PRINT STYLES
+   ============================================ */
+
+/* Hide print receipt on screen, show only when printing */
+#printReceipt {
+  display: none;
+}
+
+/* Print Receipt Container */
+.receipt-print {
+  width: 80mm; /* Standard thermal receipt width */
+  max-width: 80mm;
+  margin: 0 auto;
+  padding: 15px;
+  font-family: 'Courier New', monospace;
+  background: #fff;
+  color: #000;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Header Section */
+.receipt-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.cafe-logo {
+  font-size: 40px;
+  margin-bottom: 5px;
+}
+
+.receipt-header h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 5px 0;
+  letter-spacing: 1px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.cafe-tagline {
+  font-size: 10px;
+  font-style: italic;
+  margin: 3px 0;
+  color: #555;
+}
+
+.cafe-info {
+  margin-top: 8px;
+}
+
+.cafe-info p {
+  margin: 3px 0;
+  font-size: 10px;
+  color: #333;
+}
+
+/* Divider */
+.receipt-divider {
+  border-top: 1px dashed #333;
+  margin: 10px 0;
+}
+
+/* Order Info Section */
+.order-info {
+  margin-bottom: 10px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  font-size: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.info-value {
+  color: #000;
+}
+
+/* Items Section */
+.items-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+.items-header .col-qty,
+.items-header .col-price,
+.items-header .col-total {
+  text-align: right;
+}
+
+.items-list {
+  margin: 10px 0;
+}
+
+.receipt-item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 5px 0;
+  font-size: 11px;
+  align-items: center;
+}
+
+.receipt-item-row span:nth-child(2),
+.receipt-item-row span:nth-child(3),
+.receipt-item-row span:nth-child(4) {
+  text-align: right;
+}
+
+.receipt-item-row span:first-child {
+  font-weight: 500;
+}
+
+/* Totals Section */
+.receipt-totals {
+  margin-top: 10px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  font-size: 11px;
+}
+
+.tax-row {
+  font-size: 10px;
+  color: #555;
+}
+
+.grand-total {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.grand-total span {
+  font-family: 'Poppins', sans-serif;
+}
+
+.payment-method {
+  font-size: 11px;
+  font-weight: bold;
+  background: #f0f0f0;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+/* Footer Section */
+.receipt-footer {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.savings-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.savings-text {
+  margin: 0;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.thank-you {
+  margin: 15px 0;
+}
+
+.thank-you h3 {
+  font-size: 13px;
+  margin: 5px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.thank-you p {
+  font-size: 10px;
+  margin: 3px 0;
+  color: #555;
+}
+
+.footer-info {
+  margin: 10px 0;
+}
+
+.footer-info p {
+  margin: 5px 0;
+  font-size: 9px;
+  color: #666;
+}
+
+.terms {
+  font-size: 8px !important;
+  font-style: italic;
+  color: #999 !important;
+}
+
+/* Barcode Section */
+.barcode-section {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.barcode {
+  font-family: 'Libre Barcode 128', cursive;
+  font-size: 30px;
+  letter-spacing: 0;
+  margin: 5px 0;
+}
+
+.barcode-text {
+  font-size: 9px;
+  margin: 5px 0;
+  color: #666;
+}
+
+/* PAYMENT POPUP REFINEMENT */
+.receipt-card {
+  width: 340px;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.receipt-card .amount {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 16px 0;
+  text-align: center;
+}
+
+.payment-note {
+  font-size: 14px;
+  color: #374151;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.payment-qr {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0;
+}
+
+.receipt-actions {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receipt-actions button {
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.receipt-actions .confirm {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+}
+
+.receipt-actions .cancel {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+}

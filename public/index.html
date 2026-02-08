@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Café POS | Secure Login</title>
+  <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h1>CAFE BARISTA</h1>
+      <p class="subtitle">Billing & Admin System</p>
+
+      <form id="loginForm">
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Admin / Cashier" required>
+
+        <label>PIN</label>
+        <input type="password" id="pin" maxlength="4" placeholder="••••" required>
+
+        <button type="submit">Sign In</button>
+        <p id="error" class="error"></p>
+      </form>
+
+      <div class="footer-text">
+        Secure access for authorized users only
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>

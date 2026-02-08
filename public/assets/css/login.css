@@ -1,0 +1,89 @@
+* {
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #f4f6f8, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  width: 360px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 14px;
+  box-shadow: 0 25px 45px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.login-card h1 {
+  margin-bottom: 6px;
+  color: #6f4e37;
+  font-size: 28px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 28px;
+}
+
+label {
+  display: block;
+  text-align: left;
+  font-size: 13px;
+  color: #444;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 18px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #6f4e37;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #6f4e37;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5a3d2b;
+}
+
+.error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.footer-text {
+  margin-top: 22px;
+  font-size: 12px;
+  color: #999;
+}
