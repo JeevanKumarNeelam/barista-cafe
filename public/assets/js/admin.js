@@ -7,8 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const cardTotal = document.getElementById("cardTotal");
   const ordersTable = document.getElementById("ordersTable");
 
-  const BACKEND_URL = "http://localhost:5000";
+  // ✅ BASE backend URL ONLY
+  const BACKEND_URL = "https://barista-cafe.onrender.com";
 
+  /* ======================
+     RENDER ADMIN DATA
+     ====================== */
   function renderAdminData(orders) {
     let cash = 0, upi = 0, card = 0, sales = 0;
     ordersTable.innerHTML = "";
@@ -47,6 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
     cardTotal.innerText = `₹${card}`;
   }
 
+  /* ======================
+     FETCH ORDERS
+     ====================== */
   function fetchOrders() {
     fetch(`${BACKEND_URL}/orders`)
       .then(res => res.json())
@@ -55,9 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   fetchOrders();
-  setInterval(fetchOrders, 1000);
+  setInterval(fetchOrders, 1000); // real POS feel
 
-  /* ✅ CLEAR ORDERS */
+  /* ======================
+     CLEAR ORDERS (FIXED)
+     ====================== */
   document.getElementById("clearOrders").onclick = async () => {
     if (!confirm("Clear all order data?")) return;
 
@@ -69,6 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  /* ======================
+     LOGOUT
+     ====================== */
   document.getElementById("logoutAdmin").onclick = () => {
     window.location.href = "index.html";
   };

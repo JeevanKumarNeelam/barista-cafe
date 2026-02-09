@@ -5,13 +5,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  /* ======================
+     STATE
+     ====================== */
   let cart = [];
   let selectedPaymentType = null;
 
   const CGST_RATE = 0.04;
   const SGST_RATE = 0.04;
   const POS_PIN = "1234";
-  const BACKEND_URL = "http://localhost:5000";
+
+  // ✅ CHANGE ONLY THIS IF BACKEND URL CHANGES
+  const BACKEND_URL = "https://barista-cafe.onrender.com";
 
   const $ = id => document.getElementById(id);
 
@@ -73,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
      ====================== */
   function loadCategory(category) {
     items.innerHTML = `<h4>${category}</h4>`;
+
     MENU[category].forEach(item => {
       const div = document.createElement("div");
       div.className = "item-row";
@@ -108,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* ======================
-     CHANGE QTY (FIXED)
+     CHANGE QTY
      ====================== */
   function changeQty(name, delta) {
     const item = cart.find(i => i.name === name);
@@ -122,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ======================
-     RENDER BILL (FIXED)
+     RENDER BILL
      ====================== */
   function renderBill() {
     billItems.innerHTML = "";
@@ -186,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* ======================
-     HOLD / RECALL (FIXED)
+     HOLD / RECALL BILL
      ====================== */
   holdBillBtn.onclick = () => {
     if (!cart.length) return alert("No items to hold");
@@ -201,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("heldBills", JSON.stringify(heldBills));
     cart = [];
     renderBill();
-    alert("Bill held successfully");
   };
 
   recallBillBtn.onclick = () => {
@@ -255,6 +260,18 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       receiptQR.innerHTML = "";
+
+      // ✅ RESTORED UPI QR
+      if (selectedPaymentType === "UPI") {
+        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+        new QRCode(receiptQR, {
+          text: `upi://pay?pa=9492625852@ibl&pn=BaristaCafe&am=${total}&cu=INR`,
+          width: 160,
+          height: 160
+        });
+      }
+
       receiptModal.classList.add("active");
     };
   });
