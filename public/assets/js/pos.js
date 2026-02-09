@@ -279,24 +279,28 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ======================
      CONFIRM PAYMENT
      ====================== */
-  confirmPaymentBtn.onclick = () => {
-    if (!cart.length) return;
+ confirmPaymentBtn.onclick = () => {
+  if (!cart.length) return;
 
-    fetch(`${BACKEND_URL}/order`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        source: "POS",
-        items: cart,
-        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
-        payment: selectedPaymentType
-      })
-    });
+  generateThermalPDF(cart, selectedPaymentType);
 
-    cart = [];
-    receiptModal.classList.remove("active");
-    renderBill();
-  };
+  // existing backend order save (DO NOT REMOVE)
+  fetch(`${BACKEND_URL}/order`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source: "POS",
+      items: cart,
+      total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+      payment: selectedPaymentType
+    })
+  });
+
+  cart = [];
+  receiptModal.classList.remove("active");
+  renderBill();
+};
+
 
   closeReceiptBtn.onclick = () => receiptModal.classList.remove("active");
 
@@ -309,3 +313,90 @@ document.addEventListener("DOMContentLoaded", () => {
   renderBill();
 
 });
+
+function generateThermalPDF(cart, paymentType) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("p", "mm", "a4");
+
+  let y = 20;
+  const left = 60;   // center thermal on A4
+  const lineGap = 6;
+
+  doc.setFont("courier", "normal");
+
+  const centerText = (text) => {
+    doc.text(text, 105, y, { align: "center" });
+    y += lineGap;
+  };
+
+  const leftText = (text) => {
+    doc.text(text, left, y);
+    y += lineGap;
+  };
+
+  const rightText = (label, value) => {
+    doc.text(label, left, y);
+    doc.text(value, 150, y, { align: "right" });
+    y += lineGap;
+  };
+
+  /* HEADER */
+  doc.setFontSize(14);
+  centerText("CAFE BARISTA");
+  doc.setFontSize(10);
+  centerText("BrewHouse Cafe, Hyderabad");
+  centerText("Ph: 9876543210");
+
+  y += 2;
+  doc.line(left, y, 150, y);
+  y += lineGap;
+
+  leftText(`Bill No : ${Date.now()}`);
+  leftText(`Date    : ${new Date().toLocaleString()}`);
+
+  y += 2;
+  doc.line(left, y, 150, y);
+  y += lineGap;
+
+  leftText("Item                Qty   Amt");
+  doc.line(left, y, 150, y);
+  y += lineGap;
+
+  /* ITEMS */
+  let subtotal = 0;
+  cart.forEach(item => {
+    const amount = item.price * item.qty;
+    subtotal += amount;
+
+    doc.text(item.name.substring(0, 18), left, y);
+    doc.text(String(item.qty), left + 40, y);
+    doc.text(String(amount), 150, y, { align: "right" });
+    y += lineGap;
+  });
+
+  doc.line(left, y, 150, y);
+  y += lineGap;
+
+  const cgst = Math.round(subtotal * 0.04);
+  const sgst = Math.round(subtotal * 0.04);
+  const total = subtotal + cgst + sgst;
+
+  rightText("Subtotal", `₹${subtotal}`);
+  rightText("CGST (4%)", `₹${cgst}`);
+  rightText("SGST (4%)", `₹${sgst}`);
+
+  doc.line(left, y, 150, y);
+  y += lineGap;
+
+  doc.setFontSize(12);
+  rightText("TOTAL", `₹${total}`);
+
+  doc.setFontSize(10);
+  y += lineGap;
+  leftText(`Payment : ${paymentType}`);
+
+  y += lineGap;
+  centerText("Thank you! Visit again ☕");
+
+  doc.save(`Cafe_BARISTA_Bill_${Date.now()}.pdf`);
+}
