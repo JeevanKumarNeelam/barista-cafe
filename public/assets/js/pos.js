@@ -1,27 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+  /* ======================
+     SAFETY
+  ====================== */
   if (typeof MENU === "undefined") {
     alert("MENU not loaded. Check items.js path.");
     return;
   }
 
   /* ======================
+     DAILY RESET (ORDER ID)
+  ====================== */
+  const today = new Date().toDateString();
+  const lastDate = localStorage.getItem("pos_last_date");
+
+  if (lastDate !== today) {
+    localStorage.setItem("pos_last_date", today);
+    localStorage.setItem("pos_order_counter", "0");
+    localStorage.removeItem("heldBills");
+  }
+
+  /* ======================
      STATE
-     ====================== */
+  ====================== */
   let cart = [];
   let selectedPaymentType = null;
+
+  let orderCounter = Number(localStorage.getItem("pos_order_counter") || 0);
 
   const CGST_RATE = 0.04;
   const SGST_RATE = 0.04;
   const POS_PIN = "1234";
-
   const BACKEND_URL = "https://barista-cafe.onrender.com";
 
   const $ = id => document.getElementById(id);
 
   /* ======================
-     DOM REFERENCES
-     ====================== */
+     DOM
+  ====================== */
   const items = $("items");
   const billItems = $("billItems");
   const summary = $("summary");
@@ -37,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const receiptModal = $("receiptModal");
   const receiptSummary = $("receiptSummary");
+  const receiptQR = $("receiptQR");
   const confirmPaymentBtn = $("confirmPayment");
   const closeReceiptBtn = $("closeReceipt");
 
@@ -50,10 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const paymentButtons = document.querySelectorAll(".payment-options button");
 
   /* ======================
-     LOCK / LOGOUT
-     ====================== */
+     LOGOUT / LOCK
+  ====================== */
   logoutBtn.onclick = () => {
-    if (confirm("Are you sure you want to logout?")) {
+    if (confirm("Logout POS?")) {
       cart = [];
       window.location.href = "index.html";
     }
@@ -73,10 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======================
      LOAD CATEGORY
-     ====================== */
+  ====================== */
   function loadCategory(category) {
     items.innerHTML = `<h4>${category}</h4>`;
-
     MENU[category].forEach(item => {
       const div = document.createElement("div");
       div.className = "item-row";
@@ -97,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======================
      ADD ITEM
-     ====================== */
+  ====================== */
   items.onclick = e => {
     const card = e.target.closest(".item-row");
     if (!card) return;
@@ -113,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======================
      CHANGE QTY
-     ====================== */
+  ====================== */
   function changeQty(name, delta) {
     const item = cart.find(i => i.name === name);
     if (!item) return;
@@ -127,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======================
      RENDER BILL
-     ====================== */
+  ====================== */
   function renderBill() {
     billItems.innerHTML = "";
     let subtotal = 0;
@@ -138,29 +154,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = document.createElement("div");
       row.className = "bill-item";
 
-      const nameEl = document.createElement("span");
-      nameEl.textContent = i.name;
+      row.innerHTML = `
+        <span>${i.name}</span>
+        <div class="qty">
+          <button class="minus">-</button>
+          <span>${i.qty}</span>
+          <button class="plus">+</button>
+        </div>
+        <span>₹${i.price * i.qty}</span>
+      `;
 
-      const qtyEl = document.createElement("div");
-      qtyEl.className = "qty";
+      row.querySelector(".minus").onclick = () => changeQty(i.name, -1);
+      row.querySelector(".plus").onclick = () => changeQty(i.name, 1);
 
-      const minusBtn = document.createElement("button");
-      minusBtn.textContent = "-";
-      minusBtn.onclick = () => changeQty(i.name, -1);
-
-      const qtyText = document.createElement("span");
-      qtyText.textContent = i.qty;
-
-      const plusBtn = document.createElement("button");
-      plusBtn.textContent = "+";
-      plusBtn.onclick = () => changeQty(i.name, 1);
-
-      qtyEl.append(minusBtn, qtyText, plusBtn);
-
-      const priceEl = document.createElement("span");
-      priceEl.textContent = `₹${i.price * i.qty}`;
-
-      row.append(nameEl, qtyEl, priceEl);
       billItems.appendChild(row);
     });
 
@@ -180,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======================
      CLEAR BILL
-     ====================== */
+  ====================== */
   clearBtn.onclick = () => {
     if (!cart.length) return;
     if (confirm("Clear bill?")) {
@@ -190,15 +196,15 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /* ======================
-     HOLD / RECALL
-     ====================== */
+     HOLD BILL (FIXED)
+  ====================== */
   holdBillBtn.onclick = () => {
     if (!cart.length) return alert("No items to hold");
 
     const heldBills = JSON.parse(localStorage.getItem("heldBills") || "[]");
+
     heldBills.push({
       id: Date.now(),
-      time: new Date().toLocaleTimeString(),
       items: JSON.parse(JSON.stringify(cart))
     });
 
@@ -207,13 +213,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderBill();
   };
 
+  /* ======================
+     RECALL BILL (FIXED)
+  ====================== */
   recallBillBtn.onclick = () => {
     const heldBills = JSON.parse(localStorage.getItem("heldBills") || "[]");
-    if (!heldBills.length) return alert("No held bills available");
+    if (!heldBills.length) return alert("No held bills");
 
-    let list = "Select bill to recall:\n";
+    let list = "Select bill:\n";
     heldBills.forEach((b, i) => {
-      list += `${i + 1}. ${b.time}\n`;
+      list += `${i + 1}. Bill ${i + 1}\n`;
     });
 
     const index = Number(prompt(list)) - 1;
@@ -227,14 +236,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ======================
      PRINT (DISABLED)
-     ====================== */
+  ====================== */
   printBillBtn.onclick = () => {
     alert("Print will be enabled later.");
   };
 
   /* ======================
-     PAYMENT FLOW
-     ====================== */
+     PAYMENT
+  ====================== */
   payBtn.onclick = () => paymentModal.classList.add("active");
   cancelPayment.onclick = () => paymentModal.classList.remove("active");
 
@@ -249,31 +258,33 @@ document.addEventListener("DOMContentLoaded", () => {
         <h3>Total Amount</h3>
         <p style="font-size:22px;font-weight:700">${totalText}</p>
         <p>
-          ${
-            selectedPaymentType === "Cash"
-              ? "Collect cash from customer"
-              : selectedPaymentType === "Card"
-              ? "Swipe card at the machine"
-              : "Collect UPI payment from customer"
-          }
+          ${selectedPaymentType === "Cash"
+            ? "Collect cash from customer"
+            : selectedPaymentType === "Card"
+            ? "Swipe card at the machine"
+            : "Collect UPI payment"}
         </p>
       `;
 
+      receiptQR.innerHTML = "";
       receiptModal.classList.add("active");
     };
   });
 
   /* ======================
-     CONFIRM PAYMENT
-     ====================== */
+     CONFIRM PAYMENT (SERIAL ORDER ID)
+  ====================== */
   confirmPaymentBtn.onclick = () => {
     if (!cart.length) return;
+
+    orderCounter++;
+    localStorage.setItem("pos_order_counter", orderCounter);
 
     fetch(`${BACKEND_URL}/order`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        source: "POS",
+        orderNo: orderCounter,
         items: cart,
         total: cart.reduce((s, i) => s + i.price * i.qty, 0),
         payment: selectedPaymentType
@@ -288,11 +299,41 @@ document.addEventListener("DOMContentLoaded", () => {
   closeReceiptBtn.onclick = () => receiptModal.classList.remove("active");
 
   /* ======================
+     KEYBOARD SHORTCUTS (FIXED)
+  ====================== */
+  document.addEventListener("keydown", e => {
+
+    if (lockModal.classList.contains("active")) return;
+
+    if (e.key === "Enter" && !paymentModal.classList.contains("active")) {
+      payBtn.click();
+    }
+
+    if (e.key === "Escape") {
+      paymentModal.classList.remove("active");
+      receiptModal.classList.remove("active");
+      lockModal.classList.remove("active");
+    }
+
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      clearBtn.click();
+    }
+
+    if (e.key === "F1") {
+      e.preventDefault();
+      logoutBtn.click();
+    }
+
+    if (e.key === "ArrowDown") holdBillBtn.click();
+    if (e.key === "ArrowUp") recallBillBtn.click();
+  });
+
+  /* ======================
      INIT
-     ====================== */
-  const firstCategory = Object.keys(MENU)[0];
+  ====================== */
   categoryButtons[0].classList.add("active");
-  loadCategory(firstCategory);
+  loadCategory(categoryButtons[0].textContent.trim());
   renderBill();
 
 });
