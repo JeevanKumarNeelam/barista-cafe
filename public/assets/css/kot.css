@@ -10,53 +10,47 @@ body {
 
 /* HEADER */
 .kot-header {
-  background: linear-gradient(90deg, #0f172a, #020617);
+  height: 46px;
+  background: #111827;
   color: #fff;
-  padding: 16px 24px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kot-header h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.kot-header button {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* LAYOUT */
-.kot-layout {
+.kot-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   padding: 16px;
 }
 
-/* SECTION */
-.kot-section {
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 12px;
-}
-
-/* SECTION HEADER */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.section-header h3 {
-  font-size: 16px;
-  margin: 0;
-}
-
-.completed-title {
-  color: #047857;
-}
-
-.clear-btn {
-  background: #fff;
-  border: 1px solid #d1d5db;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+.kot-section h3 {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
 }
 
 /* GRID */
-.order-grid {
+.orders-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
@@ -65,58 +59,54 @@ body {
 /* ORDER CARD */
 .order-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 12px;
+  border: 1px solid #e5e7eb;
+
+  aspect-ratio: 1 / 1;
+
   display: flex;
   flex-direction: column;
+  align-items: stretch;       /* ✅ FIX */
 }
 
-/* COMPLETED CARD */
-.order-card.completed {
-  background: #ecfdf5;
-  border-color: #34d399;
-}
-
-/* CARD HEADER */
+/* HEADER */
 .order-header {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-  margin-bottom: 6px;
   font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  border-bottom: 1px dashed #e5e7eb;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
 }
 
-/* ITEMS LIST (NO SCROLLBAR) */
+/* ITEMS – ALWAYS START FROM TOP */
 .order-items {
   font-size: 13px;
-  margin-bottom: 10px;
+  color: #374151;
+  flex-grow: 1;               /* ✅ PUSH BUTTON DOWN */
 }
 
 .order-items div {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 3px;
+  margin: 4px 0;
 }
 
-/* ACTION BUTTON */
-.order-card button {
-  margin-top: auto;
-  background: #111827;
-  color: #fff;
-  border: none;
+/* BUTTON */
+.ready-btn {
+  margin-top: 8px;
   padding: 8px;
-  border-radius: 6px;
+  font-size: 13px;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: white;
   cursor: pointer;
 }
 
-.order-card.completed button {
-  display: none;
-}
-
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .kot-layout {
-    grid-template-columns: 1fr;
-  }
+/* COMPLETED */
+.completed {
+  background: #f9fafb;
+  border-color: #e5e7eb;
 }

@@ -9,26 +9,20 @@
 <body>
 
 <header class="kot-header">
-  <h2>Kitchen Order Ticket (KOT)</h2>
+  <h2>Kitchen Order Ticket</h2>
+  <button id="logoutBtn">Logout</button>
 </header>
 
-<main class="kot-layout">
+<main class="kot-container">
 
-  <!-- CURRENT ORDERS -->
   <section class="kot-section">
-    <div class="section-header">
-      <h3>Current Orders</h3>
-    </div>
-    <div class="order-grid" id="currentOrders"></div>
+    <h3>Current Orders</h3>
+    <div id="currentOrders" class="orders-grid"></div>
   </section>
 
-  <!-- COMPLETED ORDERS -->
   <section class="kot-section">
-    <div class="section-header">
-      <h3 class="completed-title">Completed Orders</h3>
-      <button id="clearCompleted" class="clear-btn">Clear</button>
-    </div>
-    <div class="order-grid" id="completedOrders"></div>
+    <h3>Completed Orders</h3>
+    <div id="completedOrders" class="orders-grid"></div>
   </section>
 
 </main>

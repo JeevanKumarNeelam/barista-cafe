@@ -2,18 +2,16 @@ const BACKEND_URL = "https://barista-cafe.onrender.com";
 
 const currentOrdersEl = document.getElementById("currentOrders");
 const completedOrdersEl = document.getElementById("completedOrders");
-const clearCompletedBtn = document.getElementById("clearCompleted");
+const logoutBtn = document.getElementById("logoutBtn");
 
 let completedIds = new Set();
 
-/* FETCH ORDERS */
-async function fetchOrders() {
-  const res = await fetch(`${BACKEND_URL}/orders`);
-  const orders = await res.json();
-  renderOrders(orders);
-}
+/* LOGOUT */
+logoutBtn.onclick = () => {
+  window.location.href = "index.html";
+};
 
-/* RENDER */
+/* RENDER ORDERS */
 function renderOrders(orders) {
   currentOrdersEl.innerHTML = "";
   completedOrdersEl.innerHTML = "";
@@ -22,43 +20,42 @@ function renderOrders(orders) {
     const card = document.createElement("div");
     card.className = "order-card";
 
-    if (completedIds.has(order.id)) {
-      card.classList.add("completed");
-    }
-
     card.innerHTML = `
       <div class="order-header">
-        <span>Order #${order.id}</span>
-        <span>${order.time}</span>
+        Order #${order.id}
       </div>
+
       <div class="order-items">
-        ${order.items
-          .map(i => `<div><span>${i.name}</span><span>x${i.qty}</span></div>`)
-          .join("")}
+        ${order.items.map(i =>
+          `<div>
+            <span>${i.name}</span>
+            <span>x${i.qty}</span>
+          </div>`
+        ).join("")}
       </div>
     `;
 
-    if (!completedIds.has(order.id)) {
+    if (completedIds.has(order.id)) {
+      card.classList.add("completed");
+      completedOrdersEl.appendChild(card);
+    } else {
       const btn = document.createElement("button");
-      btn.textContent = "Mark Ready";
-      btn.onclick = () => {
-        completedIds.add(order.id);
-        renderOrders(orders);
-      };
+      btn.className = "ready-btn";
+      btn.innerText = "Mark Ready";
+      btn.onclick = () => completedIds.add(order.id);
       card.appendChild(btn);
       currentOrdersEl.appendChild(card);
-    } else {
-      completedOrdersEl.appendChild(card);
     }
   });
 }
 
-/* CLEAR COMPLETED */
-clearCompletedBtn.onclick = () => {
-  completedIds.clear();
-  completedOrdersEl.innerHTML = "";
-};
+/* FETCH ORDERS */
+function fetchOrders() {
+  fetch(`${BACKEND_URL}/orders`)
+    .then(res => res.json())
+    .then(renderOrders)
+    .catch(console.error);
+}
 
-/* AUTO REFRESH */
 fetchOrders();
 setInterval(fetchOrders, 2000);
