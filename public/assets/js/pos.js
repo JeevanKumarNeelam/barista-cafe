@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
     orderCounter++;
     localStorage.setItem("pos_order_counter", orderCounter);
 
-    fetch(`${BACKEND_URL}/order`, {
+    fetch(`${"https://barista-cafe.onrender.com"}/order`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
